@@ -9,7 +9,7 @@ describe('Validação de busca no blog', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
     cy.visit('https://blogdoagi.com.br')
- 
+    //cy.visit('https://www.pudim.com.br/')
   })
 
   
@@ -19,15 +19,11 @@ describe('Validação de busca no blog', () => {
 
   it('Pesquisa termo válido', () => {
     const termoPesquisa = termoPesquisaValido
-
-    cy.get('.ast-search-icon').click()
-    cy.get('.search-field').type(`${termoPesquisa}{enter}`)
-    cy.get('.page-title.ast-archive-title')
-      .should('contain.text', `Resultados encontrados para: ${termoPesquisa}`)
-    
+    cy.realizarPesquisa(termoPesquisa)
+          
     cy.get('#main.site-main').should('exist') // rever para não fazer a linha debaixo se não existir
     cy.get('#main.site-main article')
-      .should('have.length.greaterThan', 0) // Verifica se há pelo menos um <article>
+      .should('have.length.at.least', 1) // Verifica se há pelo menos um <article>
       .then(($articles) => {
         // Verifica se algum dos artigos contém a palavra armazenada na variável
         const hasTermo = [...$articles].some(article => article.innerText.includes(termoPesquisa))
@@ -39,11 +35,8 @@ describe('Validação de busca no blog', () => {
 
   it('Pesquisa termo inválido', () => {
     const termoPesquisa = termoPesquisaInvalido
+    cy.realizarPesquisa(termoPesquisa)
     
-    cy.get('.ast-search-icon').click()
-    cy.get('.search-field').type(`${termoPesquisa}{enter}`)
-    cy.get('.page-title.ast-archive-title')
-      .should('contain.text', `Resultados encontrados para: ${termoPesquisa}`)
     cy.get('#main.site-main').should('exist')
     cy.get('#main.site-main section.no-results.not-found')
       .should('exist')
@@ -51,14 +44,17 @@ describe('Validação de busca no blog', () => {
 
   })
 
-  //Percebo que quando não digitamos nada a damos {enter}, a pesquisa ainda assim funciona
+  //Percebo que quando não digitamos nada a damos {enter}, a pesquisa ainda assim funciona, aparentemente trazendo os resultados ordenados dos mais recentes aos mais antigos
   it('Pesquisa em branco', () => {
-    cy.get('.ast-search-icon').click()
+    const termoPesquisa = '' 
+    cy.realizarPesquisa(termoPesquisa)
+
+    /*cy.get('.ast-search-icon').click()
     cy.get('.search-field').type('{enter}')
     cy.get('.page-title.ast-archive-title')
-      .should('contain.text', 'Resultados encontrados para');
+      .should('contain.text', 'Resultados encontrados para: ')*/
     cy.get('#main.site-main').should('exist')
-    cy.get('#main.site-main article').should('have.length.greaterThan', 0)
+    cy.get('#main.site-main article').should('have.length.at.least', 1)
 
   })
 
