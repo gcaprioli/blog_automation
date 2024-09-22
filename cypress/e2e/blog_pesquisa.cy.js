@@ -1,7 +1,4 @@
 //Rever escritas de "describe" e "it"
-const termoPesquisaValido = "banco"
-const termoPesquisaInvalido = "sopro"
-
 describe('Validação de busca no blog', () => {
   beforeEach(() => {
     cy.clearCookies()
@@ -15,14 +12,14 @@ describe('Validação de busca no blog', () => {
   })
 
   it('Pesquisa termo válido', () => {
-    const termoPesquisa = termoPesquisaValido
+    const termoPesquisa = "banco"
     cy.realizarPesquisa(termoPesquisa)
     cy.checarTopoPesquisa(termoPesquisa)
     cy.checarResultadosPesquisa(true, termoPesquisa)     
   })
 
   it('Pesquisa termo inválido', () => {
-    const termoPesquisa = termoPesquisaInvalido
+    const termoPesquisa = "sopro"
     cy.realizarPesquisa(termoPesquisa)
     cy.checarTopoPesquisa(termoPesquisa)
     cy.checarResultadosPesquisa(false, termoPesquisa)
@@ -30,10 +27,17 @@ describe('Validação de busca no blog', () => {
 
   //Percebi que quando não digitamos nada e damos {enter}, a pesquisa ainda assim funciona, aparentemente trazendo os resultados ordenados dos mais recentes aos mais antigos
   it('Pesquisa em branco', () => {
-    const termoPesquisa = '' 
+    const termoPesquisa = "" 
     cy.realizarPesquisa(termoPesquisa)
     cy.checarTopoPesquisa(termoPesquisa)
     cy.checarResultadosPesquisa(true, termoPesquisa)
   })
 
+  //Pesquisa com mais de uma palavra
+  it('Pesquisa com termo composto', () => {
+    const termoPesquisa = "receber benefício" 
+    cy.realizarPesquisa(termoPesquisa)
+    cy.checarTopoPesquisa(termoPesquisa)
+    cy.checarResultadosPesquisa(true, termoPesquisa)
+  })
 })
